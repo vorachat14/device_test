@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -13,7 +14,7 @@ class LocalNotificationService {
   Future<void> intialize() async {
     tz.initializeTimeZones();
     const AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('@drawable/ic_stat_android');
+        AndroidInitializationSettings('@mipmap/roller');
 
     IOSInitializationSettings iosInitializationSettings =
         IOSInitializationSettings(
@@ -34,13 +35,17 @@ class LocalNotificationService {
     );
   }
 
-  Future<NotificationDetails> notificationDetails() async {
+  Future<NotificationDetails> _notificationDetails() async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('channel_id', 'channel_name',
             channelDescription: 'description',
             importance: Importance.max,
             priority: Priority.max,
-            playSound: true);
+            playSound: true,
+            // color:  Colors.red,
+             icon: '@mipmap/roller',
+              largeIcon: const DrawableResourceAndroidBitmap('@mipmap/roller'),
+             );
 
     const IOSNotificationDetails iosNotificationDetails =
         IOSNotificationDetails();
@@ -56,7 +61,7 @@ class LocalNotificationService {
     required String title,
     required String body,
   }) async {
-    final details = await notificationDetails();
+    final details = await _notificationDetails();
     await _localNotificationService.show(id, title, body, details);
   }
 
@@ -65,7 +70,7 @@ class LocalNotificationService {
       required String title,
       required String body,
       required int seconds}) async {
-    final details = await notificationDetails();
+    final details = await _notificationDetails();
     await _localNotificationService.zonedSchedule(
       id,
       title,
@@ -85,10 +90,10 @@ class LocalNotificationService {
       {required int id,
       required String title,
       required String body,
-      required String payload}) async {
-    final details = await notificationDetails();
+      required String routes}) async {
+    final details = await _notificationDetails();
     await _localNotificationService.show(id, title, body, details,
-        payload: payload);
+        payload: routes);
   }
 
   void onDidReceiveLocalNotification(
